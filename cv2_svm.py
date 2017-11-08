@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct 30 20:53:09 2017
+
+@author: fs
+"""
+
 import numpy as np
 import os, glob, random, cv2
  
@@ -34,12 +42,17 @@ def main():
  
     yPredict =[yTrain[np.sum((xTrain-np.tile(d,(num_train,1)))**2, 1).argmin()] for d in xTest]
     print ('欧式距离法识别率: %.2f%%'% ((yPredict == yTest).mean()*100))
- 
-    svm = cv2.SVM()                              #支持向量机方法
-    svm.train(np.float32(xTrain), np.float32(yTrain), params = {'kernel_type':cv2.SVM_LINEAR})
-    yPredict = [svm.predict(d) for d in np.float32(xTest)]
+    svm = cv2.ml.SVM_create()
+    svm.setType(cv2.ml.SVM_C_SVC)
+    svm.setKernel(cv2.ml.SVM_LINEAR)
+    svm.setTermCriteria((cv2.TERM_CRITERIA_COUNT, 100, 1.e-06))
+                              #支持向量机方法
+    responses = np.int32(yTrain).reshape(-1,1)    
+    trainData = np.float32(xTrain).reshape(-1,50)
+    svm.train(trainData, cv2.ml.ROW_SAMPLE, responses)
+    yPredict = svm.predict(xTest)
     #yPredict = svm.predict_all(xTest.astype(np.float64))
-    print( u'支持向量机识别率: %.2f%%' % ((yPredict == yTest).mean()*100))
+    print( u'支持向量机识别率: %.2f' % (np.mean(np.equal(yPredict[1].squeeze(),yTest))))
  
 if __name__ =='__main__':
     main()
