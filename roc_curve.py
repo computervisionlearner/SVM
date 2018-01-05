@@ -69,7 +69,7 @@ mean_auc = auc(mean_fpr, mean_tpr)      #计算平均AUC值
 #print mean_tpr  
 plt.plot(mean_fpr, mean_tpr, 'k--',  
          label='Mean ROC (area = %0.2f)' % mean_auc, lw=2)  
-  
+
 plt.xlim([-0.05, 1.05])  
 plt.ylim([-0.05, 1.05])  
 plt.xlabel('False Positive Rate')  
